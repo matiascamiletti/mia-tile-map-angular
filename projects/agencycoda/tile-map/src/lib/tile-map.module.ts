@@ -1,16 +1,19 @@
 import { NgModule } from '@angular/core';
 import { TileMapComponent } from './tile-map.component';
+import { TileMapCanvaComponent } from './components/tile-map-canva/tile-map-canva.component';
 
 
 
 @NgModule({
   declarations: [
-    TileMapComponent
+    TileMapComponent,
+    TileMapCanvaComponent
   ],
   imports: [
   ],
   exports: [
-    TileMapComponent
+    TileMapComponent,
+    TileMapCanvaComponent
   ]
 })
 export class TileMapModule { }
