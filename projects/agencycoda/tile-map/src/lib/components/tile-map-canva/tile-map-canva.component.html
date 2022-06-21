@@ -1,1 +1,5 @@
-<p>tile-map-canva works!</p>
+<canvas #canvas [height]="height" [width]="width"></canvas>
+<button mat-button (click)="onClickMoveLayerLeft()"><mat-icon>arrow_back</mat-icon></button>
+<button mat-button (click)="onClickMoveLayerDown()"><mat-icon>arrow_downward</mat-icon></button>
+<button mat-button (click)="onClickMoveLayerUp()"><mat-icon>arrow_upward</mat-icon></button>
+<button mat-button (click)="onClickMoveLayerRight()"><mat-icon>arrow_forward</mat-icon></button>
