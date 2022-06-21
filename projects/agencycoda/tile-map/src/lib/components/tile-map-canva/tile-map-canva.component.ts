@@ -19,6 +19,7 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   layerY = 0;
   layerWidth = 4623;
   layerHeight = 3274;
+  scale = 1;
 
   sizeTileWidth = 100;
   sizeTileHeight = 100;
@@ -71,7 +72,19 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     this.draw();
   }
 
+  onClickScaleMax() {
+    this.scale += 0.25;
+    this.draw();
+  }
+
+  onClickScaleMin() {
+    this.scale -= 0.25;
+    this.draw();
+  }
+
   draw() {
+    // Set Scale
+    this.ctx?.scale(this.scale, this.scale);
     this.drawBackground();
     this.drawGrid();
   }
