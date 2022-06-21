@@ -20,6 +20,7 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   layerWidth = 4623;
   layerHeight = 3274;
   scale = 1;
+  isChangeScale = false;
 
   sizeTileWidth = 100;
   sizeTileHeight = 100;
@@ -27,6 +28,8 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   backgroundPath?: string = '/assets/map.png';
   backgroundImageSource?: HTMLImageElement;
   isBackgroundLoaded = false;
+
+  testParcel = '';
 
   constructor(
     @Inject(DOCUMENT) private document: Document
@@ -73,20 +76,32 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   }
 
   onClickScaleMax() {
-    this.scale += 0.25;
+    this.scale = 1.25;
+    this.isChangeScale = true;
     this.draw();
   }
 
   onClickScaleMin() {
-    this.scale -= 0.25;
+    this.scale = 0.75;
+    this.isChangeScale = true;
     this.draw();
   }
 
   draw() {
-    // Set Scale
-    this.ctx?.scale(this.scale, this.scale);
+    this.clean();
+    if(this.isChangeScale){
+      // Set Scale
+      this.ctx?.scale(this.scale, this.scale);
+      this.isChangeScale = false;
+    }
+    
     this.drawBackground();
     this.drawGrid();
+  }
+
+  clean(){
+    this.ctx!.fillStyle = 'black';
+    this.ctx?.fillRect(0, 0, this.layerWidth, this.layerHeight);
   }
 
   refresh() {
@@ -97,14 +112,14 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     // Draw horizontal lines
     let current = 0;
     while(current < this.layerWidth) {
-      this.drawLine(current + this.layerX, 0, current + this.layerX, this.height);
+      this.drawLine(current + this.layerX, 0, current + this.layerX, this.layerHeight);
       current += this.sizeTileWidth;
     }
 
     // Draw Vertical Lines
     let currentY = 0;
     while(currentY < this.layerHeight) {
-      this.drawLine(0, currentY + this.layerY, this.width, currentY + this.layerY);
+      this.drawLine(0, currentY + this.layerY, this.layerWidth, currentY + this.layerY);
       currentY += this.sizeTileHeight;
     }
   }
@@ -139,6 +154,15 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
       this.ctx?.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
     };
     image.src = path;
+  }
+
+  mouseOver(event: MouseEvent) {
+    // Coordenadas del mouse
+    //event.offsetX;
+    //event.offsetY;
+
+    // grid
+    this.testParcel = 'X: ' + ~~(event.offsetX / (this.sizeTileWidth * this.scale)) + ' - Y: ' + ~~(event.offsetY / (this.sizeTileHeight * this.scale));
   }
 
   loadBackground() {
