@@ -2,6 +2,12 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@agencycoda/tile-map": [
+        "dist/agencycoda/tile-map/agencycoda-tile-map",
+        "dist/agencycoda/tile-map"
+      ]
+    },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,

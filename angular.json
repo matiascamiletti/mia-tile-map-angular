@@ -1,7 +1,42 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": "38497743-d173-492e-900b-9d3bde5f91f0"
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-  }
+    "@agencycoda/tile-map": {
+      "projectType": "library",
+      "root": "projects/agencycoda/tile-map",
+      "sourceRoot": "projects/agencycoda/tile-map/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/agencycoda/tile-map/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/agencycoda/tile-map/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/agencycoda/tile-map/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/agencycoda/tile-map/src/test.ts",
+            "tsConfig": "projects/agencycoda/tile-map/tsconfig.spec.json",
+            "karmaConfig": "projects/agencycoda/tile-map/karma.conf.js"
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "@agencycoda/tile-map"
 }
