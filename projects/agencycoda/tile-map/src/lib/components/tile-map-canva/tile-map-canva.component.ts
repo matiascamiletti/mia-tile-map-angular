@@ -167,7 +167,7 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   calcCoordYCenter(pointY: number): number {
     let firstY = ~~((this.layerHeight / 2) / this.sizeTileHeight);
     let pointLayerY = ~~(pointY / (this.sizeTileHeight * this.scale));
-    let layerBlockY = this.layerX / this.sizeTileHeight;
+    let layerBlockY = this.layerY / this.sizeTileHeight;
     return pointLayerY - firstY - layerBlockY;
   }
 
