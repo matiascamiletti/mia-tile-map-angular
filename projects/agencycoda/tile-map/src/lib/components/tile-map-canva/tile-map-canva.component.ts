@@ -17,15 +17,16 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
 
   layerX = 0;
   layerY = 0;
-  layerWidth = 4623;
-  layerHeight = 3274;
+  layerWidth = 3116;
+  layerHeight = 2416;
   scale = 1;
   isChangeScale = false;
+  isCenterCoords = true;
 
-  sizeTileWidth = 100;
-  sizeTileHeight = 100;
+  sizeTileWidth = 10;
+  sizeTileHeight = 10;
 
-  backgroundPath?: string = '/assets/map.png';
+  backgroundPath?: string = '/assets/map_10.png';
   backgroundImageSource?: HTMLImageElement;
   isBackgroundLoaded = false;
 
@@ -156,20 +157,40 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     image.src = path;
   }
 
+  calcCoordXCenter(pointX: number): number {
+    let firstX = ~~((this.layerWidth / 2) / this.sizeTileWidth);
+    let pointLayerX = ~~(pointX / (this.sizeTileWidth * this.scale));
+    let layerBlockX = this.layerX / this.sizeTileWidth;
+    return pointLayerX - firstX - layerBlockX;
+  }
+
+  calcCoordYCenter(pointY: number): number {
+    let firstY = ~~((this.layerHeight / 2) / this.sizeTileHeight);
+    let pointLayerY = ~~(pointY / (this.sizeTileHeight * this.scale));
+    let layerBlockY = this.layerX / this.sizeTileHeight;
+    return pointLayerY - firstY - layerBlockY;
+  }
+
   mouseOver(event: MouseEvent) {
     // Coordenadas del mouse
     //event.offsetX;
     //event.offsetY;
 
     // grid
-    this.testParcel = 'X: ' + ~~(event.offsetX / (this.sizeTileWidth * this.scale)) + ' - Y: ' + ~~(event.offsetY / (this.sizeTileHeight * this.scale));
+    if(this.isCenterCoords) {
+      this.testParcel = 'X: ' + this.calcCoordXCenter(event.offsetX)  + ' - Y: ' + this.calcCoordYCenter(event.offsetY);
+    } else {
+      this.testParcel = 'X: ' + ~~(event.offsetX / (this.sizeTileWidth * this.scale)) + ' - Y: ' + ~~(event.offsetY / (this.sizeTileHeight * this.scale));
+    }
   }
 
   loadBackground() {
     this.backgroundImageSource = new Image();
     this.backgroundImageSource.onload = () => {
-      console.log('background cargado!');
       this.isBackgroundLoaded = true;
+      // Save image size
+      this.layerWidth = this.backgroundImageSource!.width;
+      this.layerHeight = this.backgroundImageSource!.height;
       this.draw();
     };
     this.backgroundImageSource.src = this.backgroundPath!;
