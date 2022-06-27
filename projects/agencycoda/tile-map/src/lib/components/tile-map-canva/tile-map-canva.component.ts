@@ -32,8 +32,28 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
 
   testParcel = '';
 
-  isActiveEdit = true;
+  isActiveEdit = false;
+  isActiveErase = false;
   data: Array<any> = [];
+
+  moduleActive: any;
+  modulesEdit = [
+    { title: 'Parcel 1', icon: '', data: [
+      { 'x': 0, 'y': 0, 'color': '#eee'}
+    ] },
+
+    { title: 'Parcel 2', icon: '', data: [
+      { 'x': 0, 'y': 0, 'color': 'red'}
+    ] },
+
+    { title: 'Parcel 4', icon: '', data: [
+      { 'x': 0, 'y': 0, 'color': 'red'},
+      { 'x': 1, 'y': 0, 'color': 'red'},
+      { 'x': 2, 'y': 0, 'color': 'red'},
+      { 'x': 1, 'y': 1, 'color': '#eee'},
+      { 'x': 3, 'y': 3, 'color': 'black'},
+    ] }
+  ];
 
   constructor(
     @Inject(DOCUMENT) private document: Document
@@ -91,6 +111,17 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     this.draw();
   }
 
+  onClickErase() {
+    this.isActiveEdit = false;
+    this.isActiveErase = true;
+  }
+
+  onClickModule(module: any) {
+    this.isActiveEdit = true;
+    this.isActiveErase = false;
+    this.moduleActive = module;
+  }
+
   draw() {
     this.clean();
     if(this.isChangeScale){
@@ -116,7 +147,6 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   drawParcels() {
     this.data.forEach(p => {
       this.ctx!.fillStyle = p.color;
-      console.log(this.calcCoordXToPixels(p.x));
       this.ctx?.fillRect(
         this.calcCoordXToPixels(p.x),
         this.calcCoordYToPixels(p.y),
@@ -177,15 +207,6 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   calcCoordXToPixels(coordX: number): number {
     let firstX = ~~((this.layerWidth / 2) / this.sizeTileWidth);
     let layerBlockX = this.layerX / this.sizeTileWidth;
-
-    console.log('Start calc');
-    console.log(coordX);
-    console.log(firstX);
-    console.log(layerBlockX);
-    console.log(coordX + firstX + layerBlockX);
-    console.log('End calc');
-
-    
     return (coordX + firstX + layerBlockX) * this.sizeTileWidth;
   }
 
@@ -218,7 +239,30 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     }
 
     this.draw();
-    console.log(this.data);
+  }
+
+  setModule(coordX: number, coordY: number) {
+    this.moduleActive.data.forEach((d: any) => {
+      let clon = Object.assign({}, d);
+      clon.x += coordX;
+      clon.y += coordY;
+      this.removeParcel(clon.x, clon.y);
+      this.data.push(clon);
+    });
+    this.draw();
+  }
+
+  removeParcel(coordX: number, coordY: number) {
+    let item = this.data.find(p => p.x == coordX && p.y == coordY);
+    if(item == undefined){
+      return;
+    }
+    let index = this.data.indexOf(item);
+    if(index >= 0){
+      this.data.splice(index, 1);
+    }
+    
+    this.draw();
   }
 
   mouseOver(event: MouseEvent) {
@@ -234,7 +278,14 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     let coordX = this.calcCoordXCenter(event.offsetX);
     let coordY = this.calcCoordYCenter(event.offsetY);
 
-    this.setParcelColor(coordX, coordY, '#eee');
+    if(this.isActiveErase){
+      this.removeParcel(coordX, coordY);
+    }
+
+    if(this.isActiveEdit){
+      this.setModule(coordX, coordY);
+    }
+
     console.log('click: ' + coordX + ' - Y: ' + coordY);
   }
 

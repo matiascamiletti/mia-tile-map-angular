@@ -3,5 +3,8 @@ canvas {
 }
 
 .active-editing {
-    cursor: pointer;
+    cursor: crosshair;
+}
+.active-erase {
+    cursor: s-resize;
 }

@@ -1,4 +1,4 @@
-<canvas #canvas [height]="height" [width]="width" (mousemove)="mouseOver($event)" (mouseup)="mouseUp($event)" [ngClass]="{'active-editing': isActiveEdit}"></canvas>
+<canvas #canvas [height]="height" [width]="width" (mousemove)="mouseOver($event)" (mouseup)="mouseUp($event)" [ngClass]="{'active-editing': isActiveEdit, 'active-erase': isActiveErase}"></canvas>
 <button mat-button (click)="onClickMoveLayerLeft()"><mat-icon>arrow_back</mat-icon></button>
 <button mat-button (click)="onClickMoveLayerDown()"><mat-icon>arrow_downward</mat-icon></button>
 <button mat-button (click)="onClickMoveLayerUp()"><mat-icon>arrow_upward</mat-icon></button>
@@ -6,3 +6,8 @@
 <button mat-button (click)="onClickScaleMax()"><mat-icon>zoom_in</mat-icon></button>
 <button mat-button (click)="onClickScaleMin()"><mat-icon>zoom_out</mat-icon></button>
 <span>Mouse sobre parcela: {{testParcel}}</span>
+<button mat-button (click)="onClickErase()"><mat-icon>cleaning_services</mat-icon></button>
+
+<div *ngFor="let module of modulesEdit">
+    <button mat-button (click)="onClickModule(module)">{{module.title}}</button>
+</div>
