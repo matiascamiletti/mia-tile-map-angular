@@ -1,4 +1,4 @@
-<canvas #canvas [height]="height" [width]="width" (mousemove)="mouseOver($event)"></canvas>
+<canvas #canvas [height]="height" [width]="width" (mousemove)="mouseOver($event)" (mouseup)="mouseUp($event)" [ngClass]="{'active-editing': isActiveEdit}"></canvas>
 <button mat-button (click)="onClickMoveLayerLeft()"><mat-icon>arrow_back</mat-icon></button>
 <button mat-button (click)="onClickMoveLayerDown()"><mat-icon>arrow_downward</mat-icon></button>
 <button mat-button (click)="onClickMoveLayerUp()"><mat-icon>arrow_upward</mat-icon></button>

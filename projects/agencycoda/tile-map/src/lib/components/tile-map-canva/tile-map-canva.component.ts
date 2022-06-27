@@ -32,6 +32,9 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
 
   testParcel = '';
 
+  isActiveEdit = true;
+  data: Array<any> = [];
+
   constructor(
     @Inject(DOCUMENT) private document: Document
   ) {
@@ -97,6 +100,7 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     }
     
     this.drawBackground();
+    this.drawParcels();
     this.drawGrid();
   }
 
@@ -109,7 +113,20 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     this.draw();
   }
 
+  drawParcels() {
+    this.data.forEach(p => {
+      this.ctx!.fillStyle = p.color;
+      console.log(this.calcCoordXToPixels(p.x));
+      this.ctx?.fillRect(
+        this.calcCoordXToPixels(p.x),
+        this.calcCoordYToPixels(p.y),
+        this.sizeTileWidth,
+        this.sizeTileHeight);
+    });
+  }
+
   drawGrid() {
+    this.ctx!.fillStyle = 'black';
     // Draw horizontal lines
     let current = 0;
     while(current < this.layerWidth) {
@@ -157,6 +174,27 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     image.src = path;
   }
 
+  calcCoordXToPixels(coordX: number): number {
+    let firstX = ~~((this.layerWidth / 2) / this.sizeTileWidth);
+    let layerBlockX = this.layerX / this.sizeTileWidth;
+
+    console.log('Start calc');
+    console.log(coordX);
+    console.log(firstX);
+    console.log(layerBlockX);
+    console.log(coordX + firstX + layerBlockX);
+    console.log('End calc');
+
+    
+    return (coordX + firstX + layerBlockX) * this.sizeTileWidth;
+  }
+
+  calcCoordYToPixels(coordY: number): number {
+    let firstY = ~~((this.layerHeight / 2) / this.sizeTileHeight);
+    let layerBlockY = this.layerY / this.sizeTileHeight;
+    return (coordY + firstY + layerBlockY) * this.sizeTileHeight;
+  }
+
   calcCoordXCenter(pointX: number): number {
     let firstX = ~~((this.layerWidth / 2) / this.sizeTileWidth);
     let pointLayerX = ~~(pointX / (this.sizeTileWidth * this.scale));
@@ -171,11 +209,19 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     return pointLayerY - firstY - layerBlockY;
   }
 
-  mouseOver(event: MouseEvent) {
-    // Coordenadas del mouse
-    //event.offsetX;
-    //event.offsetY;
+  setParcelColor(coordX: number, coordY: number, color: string) {
+    let parcel = this.data.find(p => p.x == coordX && p.y == coordY);
+    if(parcel == undefined){
+      this.data.push({ 'x': coordX, 'y': coordY, 'color': color});
+    } else {
+      parcel.color = color;
+    }
 
+    this.draw();
+    console.log(this.data);
+  }
+
+  mouseOver(event: MouseEvent) {
     // grid
     if(this.isCenterCoords) {
       this.testParcel = 'X: ' + this.calcCoordXCenter(event.offsetX)  + ' - Y: ' + this.calcCoordYCenter(event.offsetY);
@@ -184,13 +230,19 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     }
   }
 
+  mouseUp(event: MouseEvent) {
+    let coordX = this.calcCoordXCenter(event.offsetX);
+    let coordY = this.calcCoordYCenter(event.offsetY);
+
+    this.setParcelColor(coordX, coordY, '#eee');
+    console.log('click: ' + coordX + ' - Y: ' + coordY);
+  }
+
   loadBackground() {
     this.backgroundImageSource = new Image();
     this.backgroundImageSource.onload = () => {
       this.isBackgroundLoaded = true;
-      // Save image size
-      this.layerWidth = this.backgroundImageSource!.width;
-      this.layerHeight = this.backgroundImageSource!.height;
+      this.loadSizes();
       this.draw();
     };
     this.backgroundImageSource.src = this.backgroundPath!;
@@ -199,6 +251,21 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   loadConfig() {
     this.width = this.document.body.clientWidth;
     this.height = this.document.body.clientHeight;
+  }
+
+  loadSizes() {
+    // Save image size
+    this.layerWidth = this.backgroundImageSource!.width;
+    this.layerHeight = this.backgroundImageSource!.height;
+
+    // Create all parcels
+    //this.data = [];
+    /*for (let x = 0; x < this.layerWidth; x+=this.sizeTileWidth) {
+      for (let y = 0; y < this.layerHeight; x+=this.sizeTileHeight) {
+        this.data.push({ 'x': x, 'y': y, 'color': ''});
+      }
+    }*/
+    //console.log(this.data);
   }
 
   initContext2D() {
