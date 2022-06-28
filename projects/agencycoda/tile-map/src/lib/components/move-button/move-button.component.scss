@@ -1,0 +1,21 @@
+.container-move-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    width: 180px;
+    .laterals {
+        width: 180px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .up {
+        width: 180px;
+        display: flex;
+        justify-content: center;
+    }
+    .down {
+        width: 180px;
+        display: flex;
+        justify-content: center;
+    }
+}

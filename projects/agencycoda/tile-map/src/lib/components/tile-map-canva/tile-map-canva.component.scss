@@ -14,3 +14,10 @@ canvas {
         color: red !important;
     }
 }
+
+mia-move-button {
+    position: absolute;
+    right: 0;
+    z-index: 2;
+    bottom: 0;
+}

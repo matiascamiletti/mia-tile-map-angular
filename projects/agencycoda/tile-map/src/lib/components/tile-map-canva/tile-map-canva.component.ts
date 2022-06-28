@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { TileMapProperties } from '../../entities/tile-map-properties';
 
 @Component({
   selector: 'mia-tile-map-canva',
@@ -15,16 +16,10 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
 
   ctx?: CanvasRenderingContext2D | null;
 
-  layerX = 0;
-  layerY = 0;
-  layerWidth = 3116;
-  layerHeight = 2416;
-  scale = 1;
+  properties = new TileMapProperties();
+
   isChangeScale = false;
   isCenterCoords = true;
-
-  sizeTileWidth = 10;
-  sizeTileHeight = 10;
 
   backgroundPath?: string = '/assets/map_10.png';
   backgroundImageSource?: HTMLImageElement;
@@ -71,42 +66,14 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     
   }
 
-  onClickMoveLayerLeft() {
-    if(this.layerX > this.layerWidth){ return; }
-    this.layerX -= this.sizeTileWidth;
-    this.draw();
-  }
-
-  onClickMoveLayerRight() {
-    if(this.layerX >= 0){ return; }
-    this.layerX += this.sizeTileWidth;
-    this.draw();
-  }
-
-  onClickMoveLayerUp() {
-    if(this.layerY > this.layerHeight){
-      return;
-    }
-    this.layerY -= this.sizeTileHeight;
-    this.draw();
-  }
-
-  onClickMoveLayerDown() {
-    if(this.layerY >= 0){
-      return;
-    }
-    this.layerY += this.sizeTileHeight;
-    this.draw();
-  }
-
   onClickScaleMax() {
-    this.scale = 1.25;
+    this.properties.scale = 1.25;
     this.isChangeScale = true;
     this.draw();
   }
 
   onClickScaleMin() {
-    this.scale = 0.75;
+    this.properties.scale = 0.75;
     this.isChangeScale = true;
     this.draw();
   }
@@ -131,7 +98,7 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     this.clean();
     if(this.isChangeScale){
       // Set Scale
-      this.ctx?.scale(this.scale, this.scale);
+      this.ctx?.scale(this.properties.scale, this.properties.scale);
       this.isChangeScale = false;
     }
     
@@ -142,7 +109,7 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
 
   clean(){
     this.ctx!.fillStyle = 'black';
-    this.ctx?.fillRect(0, 0, this.layerWidth, this.layerHeight);
+    this.ctx?.fillRect(0, 0, this.properties.layerWidth, this.properties.layerHeight);
   }
 
   refresh() {
@@ -155,8 +122,8 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
       this.ctx?.fillRect(
         this.calcCoordXToPixels(p.x),
         this.calcCoordYToPixels(p.y),
-        this.sizeTileWidth,
-        this.sizeTileHeight);
+        this.properties.sizeTileWidth,
+        this.properties.sizeTileHeight);
     });
   }
 
@@ -164,24 +131,24 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     this.ctx!.fillStyle = 'black';
     // Draw horizontal lines
     let current = 0;
-    while(current < this.layerWidth) {
-      this.drawLine(current + this.layerX, 0, current + this.layerX, this.layerHeight);
-      current += this.sizeTileWidth;
+    while(current < this.properties.layerWidth) {
+      this.drawLine(current + this.properties.layerX, 0, current + this.properties.layerX, this.properties.layerHeight);
+      current += this.properties.sizeTileWidth;
     }
 
     // Draw Vertical Lines
     let currentY = 0;
-    while(currentY < this.layerHeight) {
-      this.drawLine(0, currentY + this.layerY, this.layerWidth, currentY + this.layerY);
-      currentY += this.sizeTileHeight;
+    while(currentY < this.properties.layerHeight) {
+      this.drawLine(0, currentY + this.properties.layerY, this.properties.layerWidth, currentY + this.properties.layerY);
+      currentY += this.properties.sizeTileHeight;
     }
   }
 
   drawBackground() {
     if(!this.isBackgroundLoaded){ return; }
 
-    this.ctx?.fillRect(0, 0, this.layerWidth, this.layerHeight);
-    this.ctx?.drawImage(this.backgroundImageSource!, this.layerX, this.layerY, this.layerWidth, this.layerHeight);
+    this.ctx?.fillRect(0, 0, this.properties.layerWidth, this.properties.layerHeight);
+    this.ctx?.drawImage(this.backgroundImageSource!, this.properties.layerX, this.properties.layerY, this.properties.layerWidth, this.properties.layerHeight);
   }
 
   drawLine(ax: number, ay: number, bx: number, by: number) {
@@ -210,28 +177,28 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   }
 
   calcCoordXToPixels(coordX: number): number {
-    let firstX = ~~((this.layerWidth / 2) / this.sizeTileWidth);
-    let layerBlockX = this.layerX / this.sizeTileWidth;
-    return (coordX + firstX + layerBlockX) * this.sizeTileWidth;
+    let firstX = ~~((this.properties.layerWidth / 2) / this.properties.sizeTileWidth);
+    let layerBlockX = this.properties.layerX / this.properties.sizeTileWidth;
+    return (coordX + firstX + layerBlockX) * this.properties.sizeTileWidth;
   }
 
   calcCoordYToPixels(coordY: number): number {
-    let firstY = ~~((this.layerHeight / 2) / this.sizeTileHeight);
-    let layerBlockY = this.layerY / this.sizeTileHeight;
-    return (coordY + firstY + layerBlockY) * this.sizeTileHeight;
+    let firstY = ~~((this.properties.layerHeight / 2) / this.properties.sizeTileHeight);
+    let layerBlockY = this.properties.layerY / this.properties.sizeTileHeight;
+    return (coordY + firstY + layerBlockY) * this.properties.sizeTileHeight;
   }
 
   calcCoordXCenter(pointX: number): number {
-    let firstX = ~~((this.layerWidth / 2) / this.sizeTileWidth);
-    let pointLayerX = ~~(pointX / (this.sizeTileWidth * this.scale));
-    let layerBlockX = this.layerX / this.sizeTileWidth;
+    let firstX = ~~((this.properties.layerWidth / 2) / this.properties.sizeTileWidth);
+    let pointLayerX = ~~(pointX / (this.properties.sizeTileWidth * this.properties.scale));
+    let layerBlockX = this.properties.layerX / this.properties.sizeTileWidth;
     return pointLayerX - firstX - layerBlockX;
   }
 
   calcCoordYCenter(pointY: number): number {
-    let firstY = ~~((this.layerHeight / 2) / this.sizeTileHeight);
-    let pointLayerY = ~~(pointY / (this.sizeTileHeight * this.scale));
-    let layerBlockY = this.layerY / this.sizeTileHeight;
+    let firstY = ~~((this.properties.layerHeight / 2) / this.properties.sizeTileHeight);
+    let pointLayerY = ~~(pointY / (this.properties.sizeTileHeight * this.properties.scale));
+    let layerBlockY = this.properties.layerY / this.properties.sizeTileHeight;
     return pointLayerY - firstY - layerBlockY;
   }
 
@@ -275,7 +242,7 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     if(this.isCenterCoords) {
       this.testParcel = 'X: ' + this.calcCoordXCenter(event.offsetX)  + ' - Y: ' + this.calcCoordYCenter(event.offsetY);
     } else {
-      this.testParcel = 'X: ' + ~~(event.offsetX / (this.sizeTileWidth * this.scale)) + ' - Y: ' + ~~(event.offsetY / (this.sizeTileHeight * this.scale));
+      this.testParcel = 'X: ' + ~~(event.offsetX / (this.properties.sizeTileWidth * this.properties.scale)) + ' - Y: ' + ~~(event.offsetY / (this.properties.sizeTileHeight * this.properties.scale));
     }
   }
 
@@ -311,8 +278,8 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
 
   loadSizes() {
     // Save image size
-    this.layerWidth = this.backgroundImageSource!.width;
-    this.layerHeight = this.backgroundImageSource!.height;
+    this.properties.layerWidth = this.backgroundImageSource!.width;
+    this.properties.layerHeight = this.backgroundImageSource!.height;
 
     // Create all parcels
     //this.data = [];
