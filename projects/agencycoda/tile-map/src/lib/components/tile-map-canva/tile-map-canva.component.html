@@ -1,4 +1,4 @@
-<canvas #canvas [height]="height" [width]="width" (mousemove)="mouseOver($event)" (mouseup)="mouseUp($event)" [ngClass]="{'active-editing': isActiveEdit, 'active-erase': isActiveErase}"></canvas>
+<canvas #canvas [height]="height" [width]="width" (mousemove)="mouseOver($event)" (mouseup)="mouseUp($event)" (mouseout)="mouseOut($event)" [ngClass]="{'active-editing': isActiveEdit, 'active-erase': isActiveErase}"></canvas>
 <mia-move-button [properties]="properties" (draw)="draw()"></mia-move-button>
 <button mat-button (click)="onClickScaleMax()"><mat-icon>zoom_in</mat-icon></button>
 <button mat-button (click)="onClickScaleMin()"><mat-icon>zoom_out</mat-icon></button>

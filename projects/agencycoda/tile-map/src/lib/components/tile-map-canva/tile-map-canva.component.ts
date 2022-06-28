@@ -51,6 +51,8 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     ] }
   ];
 
+  overParcel?: { x: number, y: number };
+
   constructor(
     @Inject(DOCUMENT) private document: Document
   ) {
@@ -106,6 +108,7 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     this.drawBackground();
     this.drawParcels();
     this.drawGrid();
+    this.drawOverParcel();
   }
 
   clean(){
@@ -115,6 +118,19 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
 
   refresh() {
     this.draw();
+  }
+
+  drawOverParcel() {
+    if(!this.overParcel){
+      return;
+    }
+
+    this.ctx!.fillStyle = 'rgba(0,0,0,0.25)';
+      this.ctx?.fillRect(
+        PointHelper.coordXToPixels(this.properties, this.overParcel.x),
+        PointHelper.coordYToPixels(this.properties, this.overParcel.y),
+        this.properties.sizeTileWidth,
+        this.properties.sizeTileHeight);
   }
 
   drawParcels() {
@@ -215,10 +231,15 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   mouseOver(event: MouseEvent) {
     // grid
     if(this.isCenterCoords) {
-      this.testParcel = 'X: ' + PointHelper.coordXCenter(this.properties, event.offsetX)  + ' - Y: ' + PointHelper.coordYCenter(this.properties, event.offsetY);
+      let x = PointHelper.coordXCenter(this.properties, event.offsetX);
+      let y = PointHelper.coordYCenter(this.properties, event.offsetY);
+      this.testParcel = 'X: ' + x  + ' - Y: ' + y;
+      this.overParcel = { x: x, y: y };
     } else {
       this.testParcel = 'X: ' + ~~(event.offsetX / (this.properties.sizeTileWidth * this.properties.scale)) + ' - Y: ' + ~~(event.offsetY / (this.properties.sizeTileHeight * this.properties.scale));
     }
+
+    this.draw();
   }
 
   mouseUp(event: MouseEvent) {
@@ -234,6 +255,10 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     }
 
     console.log('click: ' + coordX + ' - Y: ' + coordY);
+  }
+
+  mouseOut(event: MouseEvent) {
+    this.overParcel = undefined;
   }
 
   loadBackground() {
