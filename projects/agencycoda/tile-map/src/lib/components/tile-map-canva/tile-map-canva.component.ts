@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { TileMapProperties } from '../../entities/tile-map-properties';
+import { PointHelper } from '../../helpers/point-helper';
 
 @Component({
   selector: 'mia-tile-map-canva',
@@ -120,8 +121,8 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     this.data.forEach(p => {
       this.ctx!.fillStyle = p.color;
       this.ctx?.fillRect(
-        this.calcCoordXToPixels(p.x),
-        this.calcCoordYToPixels(p.y),
+        PointHelper.coordXToPixels(this.properties, p.x),
+        PointHelper.coordYToPixels(this.properties, p.y),
         this.properties.sizeTileWidth,
         this.properties.sizeTileHeight);
     });
@@ -176,32 +177,6 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
     image.src = path;
   }
 
-  calcCoordXToPixels(coordX: number): number {
-    let firstX = ~~((this.properties.layerWidth / 2) / this.properties.sizeTileWidth);
-    let layerBlockX = this.properties.layerX / this.properties.sizeTileWidth;
-    return (coordX + firstX + layerBlockX) * this.properties.sizeTileWidth;
-  }
-
-  calcCoordYToPixels(coordY: number): number {
-    let firstY = ~~((this.properties.layerHeight / 2) / this.properties.sizeTileHeight);
-    let layerBlockY = this.properties.layerY / this.properties.sizeTileHeight;
-    return (coordY + firstY + layerBlockY) * this.properties.sizeTileHeight;
-  }
-
-  calcCoordXCenter(pointX: number): number {
-    let firstX = ~~((this.properties.layerWidth / 2) / this.properties.sizeTileWidth);
-    let pointLayerX = ~~(pointX / (this.properties.sizeTileWidth * this.properties.scale));
-    let layerBlockX = this.properties.layerX / this.properties.sizeTileWidth;
-    return pointLayerX - firstX - layerBlockX;
-  }
-
-  calcCoordYCenter(pointY: number): number {
-    let firstY = ~~((this.properties.layerHeight / 2) / this.properties.sizeTileHeight);
-    let pointLayerY = ~~(pointY / (this.properties.sizeTileHeight * this.properties.scale));
-    let layerBlockY = this.properties.layerY / this.properties.sizeTileHeight;
-    return pointLayerY - firstY - layerBlockY;
-  }
-
   setParcelColor(coordX: number, coordY: number, color: string) {
     let parcel = this.data.find(p => p.x == coordX && p.y == coordY);
     if(parcel == undefined){
@@ -240,15 +215,15 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   mouseOver(event: MouseEvent) {
     // grid
     if(this.isCenterCoords) {
-      this.testParcel = 'X: ' + this.calcCoordXCenter(event.offsetX)  + ' - Y: ' + this.calcCoordYCenter(event.offsetY);
+      this.testParcel = 'X: ' + PointHelper.coordXCenter(this.properties, event.offsetX)  + ' - Y: ' + PointHelper.coordYCenter(this.properties, event.offsetY);
     } else {
       this.testParcel = 'X: ' + ~~(event.offsetX / (this.properties.sizeTileWidth * this.properties.scale)) + ' - Y: ' + ~~(event.offsetY / (this.properties.sizeTileHeight * this.properties.scale));
     }
   }
 
   mouseUp(event: MouseEvent) {
-    let coordX = this.calcCoordXCenter(event.offsetX);
-    let coordY = this.calcCoordYCenter(event.offsetY);
+    let coordX = PointHelper.coordXCenter(this.properties, event.offsetX);
+    let coordY = PointHelper.coordYCenter(this.properties, event.offsetY);
 
     if(this.isActiveErase){
       this.removeParcel(coordX, coordY);
