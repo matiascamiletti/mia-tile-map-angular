@@ -38,15 +38,15 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
 
   moduleActive: any;
   modulesEdit = [
-    { title: 'Parcel 1', icon: '', data: [
+    { title: 'Parcel 1', active: false, icon: '', data: [
       { 'x': 0, 'y': 0, 'color': '#eee'}
     ] },
 
-    { title: 'Parcel 2', icon: '', data: [
+    { title: 'Parcel 2', active: false, icon: '', data: [
       { 'x': 0, 'y': 0, 'color': 'red'}
     ] },
 
-    { title: 'Parcel 4', icon: '', data: [
+    { title: 'Parcel 4', active: false, icon: '', data: [
       { 'x': 0, 'y': 0, 'color': 'red'},
       { 'x': 1, 'y': 0, 'color': 'red'},
       { 'x': 2, 'y': 0, 'color': 'red'},
@@ -112,11 +112,16 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
   }
 
   onClickErase() {
+    this.deactivateAllModules();
     this.isActiveEdit = false;
     this.isActiveErase = true;
   }
 
   onClickModule(module: any) {
+    this.deactivateAllModules();
+
+    module.active = true;
+    console.log(this.modulesEdit);
     this.isActiveEdit = true;
     this.isActiveErase = false;
     this.moduleActive = module;
@@ -317,6 +322,10 @@ export class TileMapCanvaComponent implements OnInit, AfterViewInit {
       }
     }*/
     //console.log(this.data);
+  }
+
+  deactivateAllModules() {
+    this.modulesEdit.map(m => m.active = false);
   }
 
   initContext2D() {

@@ -8,6 +8,6 @@
 <span>Mouse sobre parcela: {{testParcel}}</span>
 <button mat-button (click)="onClickErase()"><mat-icon>cleaning_services</mat-icon></button>
 
-<div *ngFor="let module of modulesEdit">
-    <button mat-button (click)="onClickModule(module)">{{module.title}}</button>
+<div class="container-modules" *ngFor="let module of modulesEdit">
+    <button mat-button (click)="onClickModule(module)" [ngClass]="{'active': module.active}">{{module.title}}</button>
 </div>

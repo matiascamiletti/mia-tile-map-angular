@@ -8,3 +8,9 @@ canvas {
 .active-erase {
     cursor: s-resize;
 }
+
+.container-modules {
+    .active {
+        color: red !important;
+    }
+}
