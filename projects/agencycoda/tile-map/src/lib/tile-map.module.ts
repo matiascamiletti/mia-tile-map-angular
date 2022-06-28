@@ -6,13 +6,15 @@ import {MatIconModule} from '@angular/material/icon';
 
 import { TileMapCanvaComponent } from './components/tile-map-canva/tile-map-canva.component';
 import { MoveButtonComponent } from './components/move-button/move-button.component';
+import { LongPressDirective } from './directives/long-press.directive';
 
 
 
 @NgModule({
   declarations: [
     TileMapCanvaComponent,
-    MoveButtonComponent
+    MoveButtonComponent,
+    LongPressDirective
   ],
   imports: [
     BrowserModule,

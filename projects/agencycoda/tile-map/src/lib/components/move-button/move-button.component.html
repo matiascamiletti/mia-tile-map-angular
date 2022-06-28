@@ -1,14 +1,14 @@
 <div class="container-move-buttons">
 
     <div class="up">
-        <button mat-button (click)="onClickMoveLayerDown()"><mat-icon>arrow_upward</mat-icon></button>
+        <button mat-button miaLongPress (click)="onClickMoveLayerDown()" (mouseLongPress)="onClickMoveLayerDown()"><mat-icon>arrow_upward</mat-icon></button>
     </div>
     <div class="laterals">
-        <button mat-button (click)="onClickMoveLayerRight()"><mat-icon>arrow_back</mat-icon></button>
-        <button mat-button (click)="onClickMoveLayerLeft()"><mat-icon>arrow_forward</mat-icon></button>
+        <button mat-button miaLongPress (click)="onClickMoveLayerRight()" (mouseLongPress)="onClickMoveLayerRight()"><mat-icon>arrow_back</mat-icon></button>
+        <button mat-button miaLongPress (click)="onClickMoveLayerLeft()" (mouseLongPress)="onClickMoveLayerLeft()"><mat-icon>arrow_forward</mat-icon></button>
     </div>
     <div class="down">
-        <button mat-button (click)="onClickMoveLayerUp()"><mat-icon>arrow_downward</mat-icon></button>
+        <button mat-button miaLongPress (click)="onClickMoveLayerUp()" (mouseLongPress)="onClickMoveLayerUp()"><mat-icon>arrow_downward</mat-icon></button>
     </div>
     
 </div>
